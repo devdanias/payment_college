@@ -1,0 +1,28 @@
+version: '2 '
+services:
+  db:
+    image: postgres
+    environment:
+      POSTGRES_DB: payments
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5432:5432"
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+  payment-service:
+    build: ./ms-payment-service
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
+      - rabbitmq
+  notification-service:
+    build: ./ms-notification-service
+    ports:
+      - "3001:3001"
+    depends_on:
+      - rabbitmq
